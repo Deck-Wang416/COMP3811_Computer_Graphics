@@ -19,12 +19,12 @@ void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB a
     int err = dx - dy;
 
     while (true) {
-        // 绘制当前点
+        // Draw the current point
         if (x0 >= 0 && x0 < aSurface.get_width() && y0 >= 0 && y0 < aSurface.get_height()) {
             aSurface.set_pixel_srgb(x0, y0, aColor);
         }
 
-        // 判断是否到达终点
+        // Determine whether the destination has been reached
         if (x0 == x1 && y0 == y1) break;
 
         int e2 = 2 * err;
