@@ -27,16 +27,14 @@ struct Mat22f
 // Note that you will need to implement these yourself.
 
 constexpr
-Mat22f operator*( Mat22f const& aLeft, Mat22f const& aRight ) noexcept
+Mat22f operator*(Mat22f const& aLeft, Mat22f const& aRight) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-
-	//TODO: remove the following when you start your implementation
-	(void)aLeft; // Avoid warnings about unused arguments until the function
-	(void)aRight;  // is properly implemented.
-	return Mat22f{ 1.f, 0.f, 0.f, 1.f };
+    return Mat22f{
+        aLeft._00 * aRight._00 + aLeft._01 * aRight._10,
+        aLeft._00 * aRight._01 + aLeft._01 * aRight._11,
+        aLeft._10 * aRight._00 + aLeft._11 * aRight._10,
+        aLeft._10 * aRight._01 + aLeft._11 * aRight._11
+    };
 }
 
 constexpr
