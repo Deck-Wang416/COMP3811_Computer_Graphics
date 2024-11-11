@@ -53,6 +53,12 @@ void draw_triangle_wireframe( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2
 	(void)aColor;
 }
 
+void sort_vertices_by_y(Vec2f& p0, Vec2f& p1, Vec2f& p2) {
+    if (p0.y > p1.y) std::swap(p0, p1);
+    if (p0.y > p2.y) std::swap(p0, p2);
+    if (p1.y > p2.y) std::swap(p1, p2);
+}
+
 void draw_triangle_solid(Surface& surface, Vec2f p0, Vec2f p1, Vec2f p2, ColorU8_sRGB color) {
     // Sort vertices by y-coordinate
     sort_vertices_by_y(p0, p1, p2);
