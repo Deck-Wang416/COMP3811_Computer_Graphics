@@ -53,44 +53,73 @@ void draw_triangle_wireframe( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2
 	(void)aColor;
 }
 
-void sort_vertices_by_y(Vec2f& p0, Vec2f& p1, Vec2f& p2) {
-    if (p0.y > p1.y) std::swap(p0, p1);
-    if (p0.y > p2.y) std::swap(p0, p2);
-    if (p1.y > p2.y) std::swap(p1, p2);
-}
+void draw_triangle_solid(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorU8_sRGB aColor)
+{
+    // Sort vertices by y-coordinate ascending (aP0.y <= aP1.y <= aP2.y)
+    if (aP1.y < aP0.y) std::swap(aP0, aP1);
+    if (aP2.y < aP0.y) std::swap(aP0, aP2);
+    if (aP2.y < aP1.y) std::swap(aP1, aP2);
 
-void draw_horizontal_line(Surface& surface, int y, int x_start, int x_end, ColorU8_sRGB color) {
-    if (y < 0 || y >= surface.get_height()) return;
-    x_start = std::max(0, std::min(static_cast<int>(surface.get_width()) - 1, x_start));
-	x_end = std::max(0, std::min(static_cast<int>(surface.get_width()) - 1, x_end));
-    if (x_start > x_end) std::swap(x_start, x_end);
+    // Helper function to interpolate x based on y
+    auto interpolate_x = [](Vec2f const& p1, Vec2f const& p2, float y) {
+        return p1.x + (p2.x - p1.x) * (y - p1.y) / (p2.y - p1.y);
+    };
 
-    for (int x = x_start; x <= x_end; ++x) {
-        surface.set_pixel_srgb(x, y, color);
+    // Draw bottom-flat triangle if aP1.y == aP2.y
+    if (aP1.y == aP2.y) {
+        for (int y = static_cast<int>(std::ceil(aP0.y)); y <= static_cast<int>(std::floor(aP2.y)); ++y) {
+            float x1 = interpolate_x(aP0, aP2, static_cast<float>(y));
+            float x2 = interpolate_x(aP0, aP1, static_cast<float>(y));
+            if (x1 > x2) std::swap(x1, x2);
+
+            for (int x = static_cast<int>(std::ceil(x1)); x <= static_cast<int>(std::floor(x2)); ++x) {
+                if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+                    aSurface.set_pixel_srgb(x, y, aColor);
+                }
+            }
+        }
     }
-}
+    // Draw top-flat triangle if aP0.y == aP1.y
+    else if (aP0.y == aP1.y) {
+        for (int y = static_cast<int>(std::ceil(aP0.y)); y <= static_cast<int>(std::floor(aP2.y)); ++y) {
+            float x1 = interpolate_x(aP0, aP2, static_cast<float>(y));
+            float x2 = interpolate_x(aP1, aP2, static_cast<float>(y));
+            if (x1 > x2) std::swap(x1, x2);
 
-void draw_triangle_solid(Surface& surface, Vec2f p0, Vec2f p1, Vec2f p2, ColorU8_sRGB color) {
-    // Sort vertices by y-coordinate
-    sort_vertices_by_y(p0, p1, p2);
-
-    // Calculate slopes for the left and right edges of the triangle
-    float slope1 = (p1.y == p0.y) ? 0 : (p1.x - p0.x) / (p1.y - p0.y);
-    float slope2 = (p2.y == p0.y) ? 0 : (p2.x - p0.x) / (p2.y - p0.y);
-    float slope3 = (p2.y == p1.y) ? 0 : (p2.x - p1.x) / (p2.y - p1.y);
-
-    // Draw the top part of the triangle
-    for (int y = static_cast<int>(p0.y); y < static_cast<int>(p1.y); ++y) {
-        int x_start = static_cast<int>(p0.x + slope1 * (y - p0.y));
-        int x_end = static_cast<int>(p0.x + slope2 * (y - p0.y));
-        draw_horizontal_line(surface, y, x_start, x_end, color);
+            for (int x = static_cast<int>(std::ceil(x1)); x <= static_cast<int>(std::floor(x2)); ++x) {
+                if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+                    aSurface.set_pixel_srgb(x, y, aColor);
+                }
+            }
+        }
     }
+    // Draw general triangle
+    else {
+        // Bottom part
+        for (int y = static_cast<int>(std::ceil(aP0.y)); y <= static_cast<int>(std::floor(aP1.y)); ++y) {
+            float x1 = interpolate_x(aP0, aP1, static_cast<float>(y));
+            float x2 = interpolate_x(aP0, aP2, static_cast<float>(y));
+            if (x1 > x2) std::swap(x1, x2);
 
-    // Draw the bottom part of the triangle
-    for (int y = static_cast<int>(p1.y); y <= static_cast<int>(p2.y); ++y) {
-        int x_start = static_cast<int>(p1.x + slope3 * (y - p1.y));
-        int x_end = static_cast<int>(p0.x + slope2 * (y - p0.y));
-        draw_horizontal_line(surface, y, x_start, x_end, color);
+            for (int x = static_cast<int>(std::ceil(x1)); x <= static_cast<int>(std::floor(x2)); ++x) {
+                if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+                    aSurface.set_pixel_srgb(x, y, aColor);
+                }
+            }
+        }
+
+        // Top part
+        for (int y = static_cast<int>(std::ceil(aP1.y)); y <= static_cast<int>(std::floor(aP2.y)); ++y) {
+            float x1 = interpolate_x(aP1, aP2, static_cast<float>(y));
+            float x2 = interpolate_x(aP0, aP2, static_cast<float>(y));
+            if (x1 > x2) std::swap(x1, x2);
+
+            for (int x = static_cast<int>(std::ceil(x1)); x <= static_cast<int>(std::floor(x2)); ++x) {
+                if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+                    aSurface.set_pixel_srgb(x, y, aColor);
+                }
+            }
+        }
     }
 }
 
