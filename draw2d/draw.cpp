@@ -59,6 +59,17 @@ void sort_vertices_by_y(Vec2f& p0, Vec2f& p1, Vec2f& p2) {
     if (p1.y > p2.y) std::swap(p1, p2);
 }
 
+void draw_horizontal_line(Surface& surface, int y, int x_start, int x_end, ColorU8_sRGB color) {
+    if (y < 0 || y >= surface.get_height()) return;  // Ignore lines out of bounds
+    x_start = std::max(0, std::min(surface.get_width() - 1, x_start));
+    x_end = std::max(0, std::min(surface.get_width() - 1, x_end));
+    if (x_start > x_end) std::swap(x_start, x_end);
+
+    for (int x = x_start; x <= x_end; ++x) {
+        surface.set_pixel_srgb(x, y, color);
+    }
+}
+
 void draw_triangle_solid(Surface& surface, Vec2f p0, Vec2f p1, Vec2f p2, ColorU8_sRGB color) {
     // Sort vertices by y-coordinate
     sort_vertices_by_y(p0, p1, p2);
