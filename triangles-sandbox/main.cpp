@@ -194,9 +194,9 @@ int main( int aArgc, char* aArgv[] ) try
 					{ fbwidth/2.f, fbheight-100.f },
 					{ 100.f, 100.f },
 					{ fbwidth-100.f, 100.f },
-					{ 1.f, 1.f, 0.f },
-					{ 1.f, 0.f, 1.f },
-					{ 0.f, 1.f, 1.f }
+					{ 1.f, 1.f, 0.f }, // yellow
+					{ 1.f, 0.f, 1.f }, // pink
+					{ 0.f, 1.f, 1.f } // blue
 				);
 
 			} break;
@@ -207,9 +207,9 @@ int main( int aArgc, char* aArgv[] ) try
 					{ fbwidth-100.f, 100.f },
 					{ fbwidth/2.f, fbheight-100.f },
 					{ 100.f, 100.f },
-					{ 0.f, 1.f, 1.f },
-					{ 1.f, 1.f, 0.f },
-					{ 1.f, 0.f, 1.f }
+					{ 0.f, 1.f, 1.f }, // blue
+					{ 1.f, 0.f, 1.f }, // pink
+					{ 1.f, 1.f, 0.f } // yellow
 				);
 			} break;
 
@@ -219,18 +219,18 @@ int main( int aArgc, char* aArgv[] ) try
 					{ float(fbwidth), fbheight-100.f },
 					{ fbwidth/2.f+100.f, 100.f },
 					{ fbwidth*3.f/2.f-100.f, 100.f },
-					{ 1.f, 1.f, 0.f },
-					{ 1.f, 0.f, 1.f },
-					{ 0.f, 1.f, 1.f }
+					{ 0.f, 1.f, 1.f }, // blue
+					{ 1.f, 0.f, 1.f }, // pink
+					{ 1.f, 1.f, 0.f } // yellow
 				);
 			} break;
 
 			case 4: {
 				// Use draw_triangle_solid to test a solid triangle
-				draw_triangle_solid(surface,
-					{fbwidth / 2.f, fbheight - 100.f},
-					{100.f, 100.f},
-					{fbwidth - 100.f, 100.f},
+				draw_triangle_solid( surface,
+					{ fbwidth / 2.f, fbheight - 100.f },
+					{ 100.f, 100.f },
+					{ fbwidth - 100.f, 100.f },
 					ColorU8_sRGB{255, 0, 0}
 				);
 			} break;
