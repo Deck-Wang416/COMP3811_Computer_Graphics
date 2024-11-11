@@ -6,6 +6,8 @@
 
 #include "surface.hpp"
 
+#include <iostream>
+
 void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor) {
     int x0 = static_cast<int>(aBegin.x);
     int y0 = static_cast<int>(aBegin.y);
@@ -122,72 +124,47 @@ void draw_triangle_solid(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Col
     }
 }
 
-inline
-ColorU8_sRGB linear_to_srgb(ColorF const& color)
+void draw_triangle_interp(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorF aC0, ColorF aC1, ColorF aC2)
 {
-    auto convert = [](float c) -> std::uint8_t {
-        // Clamp the value between 0.0 and 1.0
-        c = std::max(0.0f, std::min(1.0f, c));
-        // Apply gamma correction (assuming gamma = 2.2)
-        c = std::pow(c, 1.0f / 2.2f);
-        return static_cast<std::uint8_t>(c * 255.0f + 0.5f);
-    };
+    // 1. Sort vertices by y-coordinate ascending (aP0.y <= aP1.y <= aP2.y)
+    if (aP1.y < aP0.y) std::swap(aP0, aP1), std::swap(aC0, aC1);
+    if (aP2.y < aP0.y) std::swap(aP0, aP2), std::swap(aC0, aC2);
+    if (aP2.y < aP1.y) std::swap(aP1, aP2), std::swap(aC1, aC2);
 
-    return ColorU8_sRGB{
-        convert(color.r),
-        convert(color.g),
-        convert(color.b)
-    };
-}
-
-void draw_triangle_interp(Surface& aSurface,
-                          Vec2f aP0, Vec2f aP1, Vec2f aP2,
-                          ColorF aC0, ColorF aC1, ColorF aC2)
-{
-    // Calculate the bounding box of the triangle
-    float minX = std::min({ aP0.x, aP1.x, aP2.x });
-    float maxX = std::max({ aP0.x, aP1.x, aP2.x });
-    float minY = std::min({ aP0.y, aP1.y, aP2.y });
-    float maxY = std::max({ aP0.y, aP1.y, aP2.y });
-
-    // Limit the boundaries to the screen
-    int startX = std::max(0, static_cast<int>(std::floor(minX)));
-    int endX = std::min(static_cast<int>(aSurface.get_width() - 1), static_cast<int>(std::ceil(maxX)));
-    int startY = std::max(0, static_cast<int>(std::floor(minY)));
-    int endY = std::min(static_cast<int>(aSurface.get_height() - 1), static_cast<int>(std::ceil(maxY)));
-
-    // Precalculate the area of ​​the triangle
+    // 2. Calculate the area of the full triangle for normalization
     float area = (aP1.x - aP0.x) * (aP2.y - aP0.y) - (aP2.x - aP0.x) * (aP1.y - aP0.y);
-    if (area == 0.0f) return;
+    if (area == 0) return;  // Degenerate triangle, no need to draw
 
-    // Traverse each pixel within the bounding box
-    for (int y = startY; y <= endY; ++y)
-    {
-        for (int x = startX; x <= endX; ++x)
-        {
-            // Current pixel center position
-            float px = x + 0.5f;
-            float py = y + 0.5f;
+    // 3. Iterate over bounding box of the triangle
+    int minX = std::max(0, static_cast<int>(std::floor(std::min({aP0.x, aP1.x, aP2.x}))));
+    int maxX = std::min(static_cast<int>(aSurface.get_width() - 1), static_cast<int>(std::ceil(std::max({aP0.x, aP1.x, aP2.x}))));
+    int minY = std::max(0, static_cast<int>(std::floor(std::min({aP0.y, aP1.y, aP2.y}))));
+    int maxY = std::min(static_cast<int>(aSurface.get_height() - 1), static_cast<int>(std::ceil(std::max({aP0.y, aP1.y, aP2.y}))));
 
-            // Calculate the center of gravity coordinates
-            float w0 = ((aP1.x - aP2.x) * (py - aP2.y) + (aP2.y - aP1.y) * (px - aP2.x)) / area;
-            float w1 = ((aP2.x - aP0.x) * (py - aP2.y) + (aP0.y - aP2.y) * (px - aP2.x)) / area;
-            float w2 = 1.0f - w0 - w1;
+    for (int y = minY; y <= maxY; ++y) {
+        for (int x = minX; x <= maxX; ++x) {
+            Vec2f p{float(x), float(y)};
+            
+            // 4. Calculate barycentric coordinates
+            float w0 = (aP1.x - p.x) * (aP2.y - p.y) - (aP2.x - p.x) * (aP1.y - p.y);
+            float w1 = (aP2.x - p.x) * (aP0.y - p.y) - (aP0.x - p.x) * (aP2.y - p.y);
+            float w2 = (aP0.x - p.x) * (aP1.y - p.y) - (aP1.x - p.x) * (aP0.y - p.y);
 
-            // Determine whether the pixel is inside the triangle
-            if (w0 >= 0 && w1 >= 0 && w2 >= 0)
-            {
-                // Color interpolation
-                ColorF color = {
+            w0 /= area;
+            w1 /= area;
+            w2 /= area;
+
+            // 5. Check if point is inside the triangle
+            if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
+                // 6. Interpolate the color using barycentric coordinates
+                ColorF interpolatedColor{
                     w0 * aC0.r + w1 * aC1.r + w2 * aC2.r,
                     w0 * aC0.g + w1 * aC1.g + w2 * aC2.g,
                     w0 * aC0.b + w1 * aC1.b + w2 * aC2.b
                 };
 
-                // Convert linear RGB to sRGB
-                ColorU8_sRGB srgb_color = linear_to_srgb(color);
-
-                aSurface.set_pixel_srgb(x, y, srgb_color);
+                // 7. Convert the interpolated color to sRGB and set the pixel
+                aSurface.set_pixel_srgb(x, y, linear_to_srgb(interpolatedColor));
             }
         }
     }
