@@ -311,6 +311,13 @@ namespace
 		int iwidth, iheight;
 		glfwGetFramebufferSize( aWindow, &iwidth, &iheight );
 
+		float wscale = 1.f, hscale = 1.f;
+		#if defined(__APPLE__)
+		glfwGetWindowContentScale(aWindow, &wscale, &hscale);
+		#endif
+		iwidth = int(iwidth / wscale);
+		iheight = int(iheight / hscale);
+
 		if( EInputMode::piloting == state->inputMode )
 		{
 			Vec2f relative{ float(aX) - iwidth/2.f, iheight/2.f - float(aY) };

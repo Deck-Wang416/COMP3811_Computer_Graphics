@@ -133,7 +133,7 @@ void draw_triangle_interp(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Co
 
     // Calculate the area of the full triangle for normalization
     float area = (aP1.x - aP0.x) * (aP2.y - aP0.y) - (aP2.x - aP0.x) * (aP1.y - aP0.y);
-    if (area == 0) return;  // Degenerate triangle, no need to draw
+    if (area == 0) return;
 
     // Iterate over bounding box of the triangle
     int minX = std::max(0, static_cast<int>(std::floor(std::min({aP0.x, aP1.x, aP2.x}))));
