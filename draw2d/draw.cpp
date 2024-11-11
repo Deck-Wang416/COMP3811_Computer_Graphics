@@ -122,6 +122,24 @@ void draw_triangle_solid(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Col
     }
 }
 
+inline
+ColorU8_sRGB linear_to_srgb(ColorF const& color)
+{
+    auto convert = [](float c) -> std::uint8_t {
+        // Clamp the value between 0.0 and 1.0
+        c = std::max(0.0f, std::min(1.0f, c));
+        // Apply gamma correction (assuming gamma = 2.2)
+        c = std::pow(c, 1.0f / 2.2f);
+        return static_cast<std::uint8_t>(c * 255.0f + 0.5f);
+    };
+
+    return ColorU8_sRGB{
+        convert(color.r),
+        convert(color.g),
+        convert(color.b)
+    };
+}
+
 void draw_triangle_interp(Surface& aSurface,
                           Vec2f aP0, Vec2f aP1, Vec2f aP2,
                           ColorF aC0, ColorF aC1, ColorF aC2)
