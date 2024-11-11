@@ -1,0 +1,28 @@
+# macOS system files
+.DS_Store
+
+# VSCode-specific files
+.vscode/
+*.code-workspace
+
+# Compiled object files and executable files
+_build_/
+bin/
+lib/
+*.exe
+*.o
+
+# Premake and build system files
+Makefile
+premake5
+premake5.apple
+premake5.exe
+*.lua
+
+# Ignore assets and third-party libraries (only if unnecessary)
+assets/
+third_party/
+
+# Temporary files
+*.tmp
+*.log
