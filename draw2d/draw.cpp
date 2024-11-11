@@ -53,18 +53,28 @@ void draw_triangle_wireframe( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2
 	(void)aColor;
 }
 
-void draw_triangle_solid( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorU8_sRGB aColor )
-{
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
+void draw_triangle_solid(Surface& surface, Vec2f p0, Vec2f p1, Vec2f p2, ColorU8_sRGB color) {
+    // Sort vertices by y-coordinate
+    sort_vertices_by_y(p0, p1, p2);
 
-	//TODO: remove the following when you start your implementation
-	(void)aSurface; // Avoid warnings about unused arguments until the function
-	(void)aP0;   // is properly implemented.
-	(void)aP1;
-	(void)aP2;
-	(void)aColor;
+    // Calculate slopes for the left and right edges of the triangle
+    float slope1 = (p1.y == p0.y) ? 0 : (p1.x - p0.x) / (p1.y - p0.y);
+    float slope2 = (p2.y == p0.y) ? 0 : (p2.x - p0.x) / (p2.y - p0.y);
+    float slope3 = (p2.y == p1.y) ? 0 : (p2.x - p1.x) / (p2.y - p1.y);
+
+    // Draw the top part of the triangle
+    for (int y = static_cast<int>(p0.y); y < static_cast<int>(p1.y); ++y) {
+        int x_start = static_cast<int>(p0.x + slope1 * (y - p0.y));
+        int x_end = static_cast<int>(p0.x + slope2 * (y - p0.y));
+        draw_horizontal_line(surface, y, x_start, x_end, color);
+    }
+
+    // Draw the bottom part of the triangle
+    for (int y = static_cast<int>(p1.y); y <= static_cast<int>(p2.y); ++y) {
+        int x_start = static_cast<int>(p1.x + slope3 * (y - p1.y));
+        int x_end = static_cast<int>(p0.x + slope2 * (y - p0.y));
+        draw_horizontal_line(surface, y, x_start, x_end, color);
+    }
 }
 
 void draw_triangle_interp( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorF aC0, ColorF aC1, ColorF aC2 )
