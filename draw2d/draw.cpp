@@ -55,12 +55,11 @@ void draw_triangle_wireframe( Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2
 
 void draw_triangle_solid(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, ColorU8_sRGB aColor)
 {
-    // Sort vertices by y-coordinate ascending (aP0.y <= aP1.y <= aP2.y)
+    // Sort vertices by y-coordinate ascending
     if (aP1.y < aP0.y) std::swap(aP0, aP1);
     if (aP2.y < aP0.y) std::swap(aP0, aP2);
     if (aP2.y < aP1.y) std::swap(aP1, aP2);
 
-    // Helper function to interpolate x based on y
     auto interpolate_x = [](Vec2f const& p1, Vec2f const& p2, float y) {
         return p1.x + (p2.x - p1.x) * (y - p1.y) / (p2.y - p1.y);
     };

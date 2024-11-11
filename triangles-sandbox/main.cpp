@@ -225,6 +225,16 @@ int main( int aArgc, char* aArgv[] ) try
 				);
 			} break;
 
+			case 4: {
+				// Use draw_triangle_solid to test a solid triangle
+				draw_triangle_solid(surface,
+					{fbwidth / 2.f, fbheight - 100.f},
+					{100.f, 100.f},
+					{fbwidth - 100.f, 100.f},
+					ColorU8_sRGB{255, 0, 0}
+				);
+			} break;
+
 			//TODO: your own sample cases here?
 			//TODO: your own sample cases here?
 		}
