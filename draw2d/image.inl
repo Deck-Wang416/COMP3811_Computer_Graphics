@@ -40,10 +40,9 @@ std::uint8_t const* ImageRGBA::get_image_ptr() const noexcept
 inline
 ImageRGBA::Index ImageRGBA::get_linear_index( Index aX, Index aY ) const noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	(void)aX;  // Avoid warnings about unused arguments until the function is
-	(void)aY;  // properly implemented.
-	return 0; //TODO: remove this line when you implement this function
+    // Assert boundary conditions
+    assert(aX < mWidth && aY < mHeight);
+    
+    // Calculate linear index assuming row-major order
+    return aY * mWidth + aX;
 }
