@@ -49,39 +49,34 @@ std::unique_ptr<ImageRGBA> load_image( char const* aPath )
 	);
 }
 
-void blit_masked(Surface& aSurface, ImageRGBA const& aImage, Vec2f aPosition)
+void blit_masked(Surface& targetSurface, ImageRGBA const& sourceImage, Vec2f position)
 {
-    // Calculate the starting position on the surface
-    int startX = static_cast<int>(std::round(aPosition.x));
-    int startY = static_cast<int>(std::round(aPosition.y));
+    // Determine the starting position on the target surface
+    int destX = static_cast<int>(std::round(position.x));
+    int destY = static_cast<int>(std::round(position.y));
 
-    // Loop through each pixel in the image
-    for (ImageRGBA::Index y = 0; y < aImage.get_height(); ++y)
+    // Traverse through each pixel in the source image
+    for (ImageRGBA::Index row = 0; row < sourceImage.get_height(); ++row)
     {
-        for (ImageRGBA::Index x = 0; x < aImage.get_width(); ++x)
+        for (ImageRGBA::Index col = 0; col < sourceImage.get_width(); ++col)
         {
-            // Get the pixel color from the image
-            ColorU8_sRGB_Alpha pixelColor = aImage.get_pixel(x, y);
+            // Get color and alpha, skip if transparent
+            ColorU8_sRGB_Alpha srcPixel = sourceImage.get_pixel(col, row);
 
-            // Skip the pixel if the alpha value is less than 128 (considered transparent)
-            if (pixelColor.a < 128)
+            if (srcPixel.a < 128) continue;
+
+            // Calculate the target position and check bounds
+            int targetX = destX + static_cast<int>(col);
+            int targetY = destY + static_cast<int>(row);
+
+            if (targetX >= 0 && targetX < static_cast<int>(targetSurface.get_width()) &&
+                targetY >= 0 && targetY < static_cast<int>(targetSurface.get_height()))
             {
-                continue;
-            }
-
-            // Calculate the position on the surface
-            int surfaceX = startX + static_cast<int>(x);
-            int surfaceY = startY + static_cast<int>(y);
-
-            // Ensure the position is within the bounds of the surface
-            if (surfaceX >= 0 && surfaceX < static_cast<int>(aSurface.get_width()) &&
-                surfaceY >= 0 && surfaceY < static_cast<int>(aSurface.get_height()))
-            {
-                // Set the pixel color on the surface
-                aSurface.set_pixel_srgb(
-                    static_cast<Surface::Index>(surfaceX),
-                    static_cast<Surface::Index>(surfaceY),
-                    { pixelColor.r, pixelColor.g, pixelColor.b }
+                // Set the pixel on the surface with RGB values
+                targetSurface.set_pixel_srgb(
+                    static_cast<Surface::Index>(targetX),
+                    static_cast<Surface::Index>(targetY),
+                    { srcPixel.r, srcPixel.g, srcPixel.b }
                 );
             }
         }
