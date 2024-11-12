@@ -13,8 +13,6 @@
 
 #include "../support/error.hpp"
 
-#include <iostream>
-
 namespace
 {
 	struct STBImageRGBA_ : public ImageRGBA
@@ -53,9 +51,6 @@ std::unique_ptr<ImageRGBA> load_image( char const* aPath )
 
 void blit_masked(Surface& aSurface, ImageRGBA const& aImage, Vec2f aPosition)
 {
-	int lowAlphaCount = 0;
-    int totalPixelCount = 0;
-
     // Calculate the starting position on the surface
     int startX = static_cast<int>(std::round(aPosition.x));
     int startY = static_cast<int>(std::round(aPosition.y));
@@ -67,13 +62,10 @@ void blit_masked(Surface& aSurface, ImageRGBA const& aImage, Vec2f aPosition)
         {
             // Get the pixel color from the image
             ColorU8_sRGB_Alpha pixelColor = aImage.get_pixel(x, y);
-			totalPixelCount++;
-
 
             // Skip the pixel if the alpha value is less than 128 (considered transparent)
             if (pixelColor.a < 128)
             {
-				lowAlphaCount++;
                 continue;
             }
 
@@ -94,11 +86,6 @@ void blit_masked(Surface& aSurface, ImageRGBA const& aImage, Vec2f aPosition)
             }
         }
     }
-
-	// 输出alpha小于128的像素比例
-    std::cout << "Total pixels: " << totalPixelCount 
-              << ", Pixels with alpha < 128: " << lowAlphaCount 
-              << " (" << (100.0 * lowAlphaCount / totalPixelCount) << "%)" << std::endl;
 }
 
 namespace

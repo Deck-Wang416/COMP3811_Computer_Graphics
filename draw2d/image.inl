@@ -1,14 +1,18 @@
 inline
-ColorU8_sRGB_Alpha ImageRGBA::get_pixel( Index aX, Index aY ) const
+ColorU8_sRGB_Alpha ImageRGBA::get_pixel(Index aX, Index aY) const
 {
-	assert( aX < mWidth && aY < mHeight ); // Leave this at the top of the function.
+    assert(aX < mWidth && aY < mHeight);
 
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	//TODO: your implementation goes here
-	(void)aX;  // Avoid warnings about unused arguments until the function is
-	(void)aY;  // properly implemented.
-	return { 0, 0, 0, 0 }; //TODO: remove this line when you implement this
+    // Calculate the linear index in the mData array
+    Index linearIndex = (aY * mWidth + aX) * 4;
+
+    // Retrieve color components from mData
+    return ColorU8_sRGB_Alpha{
+        mData[linearIndex],       // Red
+        mData[linearIndex + 1],   // Green
+        mData[linearIndex + 2],   // Blue
+        mData[linearIndex + 3]    // Alpha
+    };
 }
 
 inline
