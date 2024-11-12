@@ -13,6 +13,8 @@
 
 #include "../support/error.hpp"
 
+#include <iostream>
+
 namespace
 {
 	struct STBImageRGBA_ : public ImageRGBA
@@ -51,38 +53,52 @@ std::unique_ptr<ImageRGBA> load_image( char const* aPath )
 
 void blit_masked(Surface& aSurface, ImageRGBA const& aImage, Vec2f aPosition)
 {
-    // Get the width and height of the image
-    auto img_width = aImage.get_width();
-    auto img_height = aImage.get_height();
+	int lowAlphaCount = 0;
+    int totalPixelCount = 0;
 
-    // Loop through each pixel of the image
-    for (ImageRGBA::Index y = 0; y < img_height; ++y) {
-        for (ImageRGBA::Index x = 0; x < img_width; ++x) {
-            // Calculate the position on the surface
-            int target_x = static_cast<int>(aPosition.x) + x;
-            int target_y = static_cast<int>(aPosition.y) + y;
+    // Calculate the starting position on the surface
+    int startX = static_cast<int>(std::round(aPosition.x));
+    int startY = static_cast<int>(std::round(aPosition.y));
 
-            // Check if the target position is within the surface bounds
-            if (target_x < 0 || target_x >= aSurface.get_width() ||
-                target_y < 0 || target_y >= aSurface.get_height()) {
-                continue; // Skip pixels outside the surface bounds
-            }
+    // Loop through each pixel in the image
+    for (ImageRGBA::Index y = 0; y < aImage.get_height(); ++y)
+    {
+        for (ImageRGBA::Index x = 0; x < aImage.get_width(); ++x)
+        {
+            // Get the pixel color from the image
+            ColorU8_sRGB_Alpha pixelColor = aImage.get_pixel(x, y);
+			totalPixelCount++;
 
-            // Get the color of the current image pixel
-            ColorU8_sRGB_Alpha pixel = aImage.get_pixel(x, y);
 
-            // Check the alpha channel (transparency); skip if below threshold
-            if (pixel.a < 128) {
+            // Skip the pixel if the alpha value is less than 128 (considered transparent)
+            if (pixelColor.a < 128)
+            {
+				lowAlphaCount++;
                 continue;
             }
 
-            // Convert the color to sRGB without alpha for the surface
-            ColorU8_sRGB color_without_alpha = { pixel.r, pixel.g, pixel.b };
+            // Calculate the position on the surface
+            int surfaceX = startX + static_cast<int>(x);
+            int surfaceY = startY + static_cast<int>(y);
 
-            // Set the pixel on the surface at the calculated position
-            aSurface.set_pixel_srgb(target_x, target_y, color_without_alpha);
+            // Ensure the position is within the bounds of the surface
+            if (surfaceX >= 0 && surfaceX < static_cast<int>(aSurface.get_width()) &&
+                surfaceY >= 0 && surfaceY < static_cast<int>(aSurface.get_height()))
+            {
+                // Set the pixel color on the surface
+                aSurface.set_pixel_srgb(
+                    static_cast<Surface::Index>(surfaceX),
+                    static_cast<Surface::Index>(surfaceY),
+                    { pixelColor.r, pixelColor.g, pixelColor.b }
+                );
+            }
         }
     }
+
+	// 输出alpha小于128的像素比例
+    std::cout << "Total pixels: " << totalPixelCount 
+              << ", Pixels with alpha < 128: " << lowAlphaCount 
+              << " (" << (100.0 * lowAlphaCount / totalPixelCount) << "%)" << std::endl;
 }
 
 namespace
