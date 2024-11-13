@@ -22,3 +22,20 @@ TEST_CASE( "Fullscreen", "[special]" )
 	REQUIRE( 0 == int(col.g) );
 	REQUIRE( 0 == int(col.b) );
 }
+
+TEST_CASE("Near Transparent Triangle", "[transparency][special]")
+{
+    Surface surface(320, 240);
+    surface.clear();
+
+    draw_triangle_interp(surface,
+                         { 60.f, 60.f }, { 260.f, 60.f }, { 160.f, 210.f },
+                         { 0.1f, 0.1f, 0.1f },
+                         { 0.1f, 0.1f, 0.1f },
+                         { 0.1f, 0.1f, 0.1f });
+
+    auto const col = find_least_red_nonzero_pixel(surface);
+    REQUIRE(col.r > 0);
+    REQUIRE(col.g > 0);
+    REQUIRE(col.b > 0);
+}
