@@ -28,3 +28,13 @@ TEST_CASE( "Partially offscreen", "[clip]" )
 		REQUIRE( 1 == pixels );
 	}
 }
+
+TEST_CASE("Partially offscreen line - diagonal", "[clip]") {
+    Surface surface(50, 50);
+    surface.clear();
+
+    draw_line_solid(surface, {-10.f, -10.f}, {25.f, 25.f}, {255, 255, 255});
+
+    REQUIRE(max_row_pixel_count(surface) > 0);
+    REQUIRE(max_col_pixel_count(surface) > 0);
+}
