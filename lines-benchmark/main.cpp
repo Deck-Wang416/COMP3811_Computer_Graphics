@@ -4,34 +4,72 @@
 #include "../draw2d/draw-ex.hpp"
 #include "../draw2d/surface-ex.hpp"
 
-namespace
-{
-	// This is a placeholder. Replace this with yor own code. Refer to
-	// blit-benchmark/main.cpp for a more complete example. 
-	void placeholder_( benchmark::State& aState )
-	{
-		auto const width = std::uint32_t(aState.range(0));
-		auto const height = std::uint32_t(aState.range(1));
+// DDA version of draw_line_solid
+void draw_line_solid_dda(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor) {
+    float x0 = aBegin.x;
+    float y0 = aBegin.y;
+    float x1 = aEnd.x;
+    float y1 = aEnd.y;
 
-		SurfaceEx surface( width, height );
-		surface.clear();
+    float dx = x1 - x0;
+    float dy = y1 - y0;
+    float steps = std::max(std::abs(dx), std::abs(dy));
+    float xIncrement = dx / steps;
+    float yIncrement = dy / steps;
+    float x = x0;
+    float y = y0;
 
-		for( auto _ : aState )
-		{
-			// Placeholder that just does something:
-			surface.clear(); // PLACEHOLDER! EXCLUDE FROM REAL BENCHMARKS!
-
-			// ClobberMemory() ensures that the compiler won't optimize away
-			// our blit operation. (Unlikely, but technically poossible.)
-			benchmark::ClobberMemory(); 
-		}
-	}
+    for (int i = 0; i <= steps; ++i) {
+        if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+            aSurface.set_pixel_srgb(static_cast<int>(x), static_cast<int>(y), aColor);
+        }
+        x += xIncrement;
+        y += yIncrement;
+    }
 }
 
-BENCHMARK( placeholder_ )
-	->Args( { 1920, 1080 } )
-	->Args( { 7680, 4320 } )
-;
+// Benchmark for Bresenham line drawing
+void benchmark_bresenham(benchmark::State& state) {
+    auto const width = std::uint32_t(state.range(0));
+    auto const height = std::uint32_t(state.range(1));
 
+    SurfaceEx surface(width, height);
+    surface.clear();
+
+    Vec2f start = {100.0f, 100.0f};
+    Vec2f end = {width - 100.0f, height - 100.0f};
+    ColorU8_sRGB color{255, 255, 255};
+
+    for (auto _ : state) {
+        draw_line_solid(surface, start, end, color);
+        benchmark::ClobberMemory();
+    }
+}
+
+// Benchmark for DDA line drawing
+void benchmark_dda(benchmark::State& state) {
+    auto const width = std::uint32_t(state.range(0));
+    auto const height = std::uint32_t(state.range(1));
+
+    SurfaceEx surface(width, height);
+    surface.clear();
+
+    Vec2f start = {100.0f, 100.0f};
+    Vec2f end = {width - 100.0f, height - 100.0f};
+    ColorU8_sRGB color{255, 255, 255};
+
+    for (auto _ : state) {
+        draw_line_solid_dda(surface, start, end, color);
+        benchmark::ClobberMemory();
+    }
+}
+
+BENCHMARK(benchmark_bresenham)
+    ->Args({1920, 1080})
+    ->Args({7680, 4320});
+
+BENCHMARK(benchmark_dda)
+    ->Args({1920, 1080})
+    ->Args({7680, 4320});
 
 BENCHMARK_MAIN();

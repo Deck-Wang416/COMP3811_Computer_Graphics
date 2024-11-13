@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+// Use Bresenham’s line algorithm
 void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB aColor) {
     int x0 = static_cast<int>(aBegin.x);
     int y0 = static_cast<int>(aBegin.y);
