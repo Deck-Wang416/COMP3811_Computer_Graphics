@@ -65,3 +65,18 @@ TEST_CASE( "Fully offscreen", "[cull]" )
 
 	// Not tested: diagonals, etc.
 }
+
+TEST_CASE("Fully offscreen - diagonal lines", "[cull]") {
+    Surface surface(100, 100);
+    surface.clear();
+
+    SECTION("Top left to top") {
+        draw_line_solid(surface, {-50.f, -50.f}, {50.f, -50.f}, {255, 0, 0});
+        REQUIRE(max_row_pixel_count(surface) == 0);
+    }
+    
+    SECTION("Bottom left to bottom right") {
+        draw_line_solid(surface, {-50.f, 150.f}, {150.f, 150.f}, {0, 0, 255});
+        REQUIRE(max_row_pixel_count(surface) == 0);
+    }
+}
