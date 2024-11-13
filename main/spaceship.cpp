@@ -40,7 +40,8 @@
 #define SPACESHIP_CUSTOM 2
 
 #ifndef SPACESHIP
-#	define SPACESHIP SPACESHIP_DEFAULT
+// #	define SPACESHIP SPACESHIP_DEFAULT
+#	define SPACESHIP SPACESHIP_CUSTOM
 #endif
 
 LineStrip make_spaceship_shape()
@@ -76,9 +77,16 @@ LineStrip make_spaceship_shape()
 	} };
 #	elif SPACESHIP == SPACESHIP_CUSTOM
 	LineStrip spaceship{ {
-
-		// TODO: YOUR DESIGN GOES HERE
-	
+		{ 75.0f, 0.0f },   // Nose
+		{ 30.0f, -30.0f },
+		{ 0.0f, -15.0f },
+		{ -30.0f, -45.0f }, // Left wing tip
+		{ -45.0f, -15.0f },
+		{ -45.0f, 15.0f },
+		{ -30.0f, 45.0f },  // Right wing tip
+		{ 0.0f, 15.0f },
+		{ 30.0f, 30.0f },
+		{ 75.0f, 0.0f }    // Connect back to nose
 	} };
 #	endif
 
@@ -89,3 +97,6 @@ LineStrip make_spaceship_shape()
 
 	return spaceship;
 }
+
+// [X] I give permission for my space ship shape to be used in future.
+// [X] I wish to have (Yufei Wang, 2024) listed with assignments that use my space ship shape.
