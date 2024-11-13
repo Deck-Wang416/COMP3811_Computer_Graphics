@@ -35,3 +35,29 @@ TEST_CASE( "Zero length", "[special]" )
 	for( std::size_t i = 1; i < counts.size(); ++i )
 		REQUIRE( 0 == counts[i]  );
 }
+
+TEST_CASE("Single pixel line", "[special]") {
+    Surface surface(50, 50);
+    surface.clear();
+
+    // Draw a single pixel line
+    draw_line_solid(surface, {25.f, 25.f}, {25.f, 25.f}, {255, 0, 0});
+
+    auto const counts = count_pixel_neighbours(surface);
+
+    // Ensure that exactly one pixel is drawn
+    REQUIRE(1 == counts[0]);
+    for (std::size_t i = 1; i < counts.size(); ++i) REQUIRE(0 == counts[i]);
+}
+
+TEST_CASE("Small gap line", "[special]") {
+    Surface surface(50, 50);
+    surface.clear();
+
+    // Two nearly overlapping points, should connect without gaps
+    draw_line_solid(surface, {25.f, 25.f}, {26.f, 25.f}, {0, 255, 0});
+
+    auto const counts = count_pixel_neighbours(surface);
+    REQUIRE(counts[1] == 2);  // Ensure two connected pixels are drawn
+    REQUIRE(counts[0] == 0);  // No isolated pixels
+}
