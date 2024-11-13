@@ -235,8 +235,35 @@ int main( int aArgc, char* aArgv[] ) try
 				);
 			} break;
 
-			//TODO: your own sample cases here?
-			//TODO: your own sample cases here?
+			case 5: {
+				// Degenerate triangle with two vertices at the same point
+				draw_triangle_interp(surface,
+					{ 150.f, 150.f }, { 150.f, 150.f }, { 250.f, 250.f },
+					{ 0.3f, 0.6f, 0.9f },
+					{ 0.3f, 0.6f, 0.9f },
+					{ 0.3f, 0.6f, 0.9f }
+				);
+			} break;
+
+			case 6: {
+				// Small triangle fully inside the screen
+				draw_triangle_interp(surface,
+					{ 200.f, 200.f }, { 210.f, 200.f }, { 205.f, 210.f },
+					{ 0.2f, 0.8f, 0.2f },
+					{ 0.2f, 0.8f, 0.2f },
+					{ 0.2f, 0.8f, 0.2f }
+				);
+			} break;
+
+			case 7: {
+				// Large triangle covering the screen
+				draw_triangle_interp(surface,
+					{ -10.f, -10.f }, { float(fbwidth) + 10.f, -10.f }, { float(fbwidth) / 2.f, float(fbheight) + 10.f },
+					{ 0.8f, 0.2f, 0.5f },
+					{ 0.8f, 0.2f, 0.5f },
+					{ 0.8f, 0.2f, 0.5f }
+				);
+			} break;
 		}
 		
 		context.draw( surface );
