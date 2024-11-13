@@ -112,3 +112,16 @@ TEST_CASE( "No gaps", "[connect]" )
 			REQUIRE( 0 == counts[i]  );
 	}
 }
+
+TEST_CASE("Connecting two lines smoothly", "[connect]") {
+    Surface surface(100, 100);
+    surface.clear();
+
+    // Draw two connected lines
+    draw_line_solid(surface, {10.f, 10.f}, {50.f, 10.f}, {255, 0, 255});
+    draw_line_solid(surface, {50.f, 10.f}, {90.f, 20.f}, {255, 0, 255});
+
+    auto const counts = count_pixel_neighbours(surface);
+    REQUIRE(counts[1] == 2);  // Two end pixels
+    REQUIRE(counts[2] > 0);   // Pixels in-between with two connections
+}
