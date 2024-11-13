@@ -74,3 +74,20 @@ TEST_CASE( "1px wide lines", "[thin]" )
 	}
 
 }
+
+TEST_CASE("Large angle line", "[thin]") {
+    Surface surface(100, 100);
+    surface.clear();
+
+    SECTION("Steep line, y-major") {
+        draw_line_solid(surface, {10.f, 10.f}, {11.f, 50.f}, {255, 255, 0});
+        REQUIRE(max_row_pixel_count(surface) == 1);
+        REQUIRE(max_col_pixel_count(surface) > 1);
+    }
+
+    SECTION("Flat line, x-major") {
+        draw_line_solid(surface, {50.f, 10.f}, {90.f, 11.f}, {0, 255, 255});
+        REQUIRE(max_row_pixel_count(surface) > 1);
+        REQUIRE(max_col_pixel_count(surface) == 1);
+    }
+}

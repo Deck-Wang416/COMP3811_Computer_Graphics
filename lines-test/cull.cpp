@@ -69,7 +69,7 @@ TEST_CASE( "Fully offscreen", "[cull]" )
 TEST_CASE("Fully offscreen - diagonal lines", "[cull]") {
     Surface surface(100, 100);
     surface.clear();
-
+ 
     SECTION("Top left to top") {
         draw_line_solid(surface, {-50.f, -50.f}, {50.f, -50.f}, {255, 0, 0});
         REQUIRE(max_row_pixel_count(surface) == 0);
