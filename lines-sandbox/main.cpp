@@ -200,6 +200,7 @@ int main( int aArgc, char* aArgv[] ) try
 				);
 
 			} break;
+
 			case 2: {
 				// Just a diagonal line, "reverse"
 				draw_line_solid( surface, 
@@ -208,15 +209,16 @@ int main( int aArgc, char* aArgv[] ) try
 				);
 			} break;
 
+			// case 3: {
+			// 	// Completely off-screen -- you should not see anything, but
+			// 	// your program should also not crash/assert.
+			// 	draw_line_solid( surface, 
+			// 		{ fbwidth+10.f, fbheight/2.f }, { fbwidth+100.f, fbheight/2.f },
+			// 		{ 255, 255, 0 }
+			// 	);
+			// } break;
+
 			case 3: {
-				// Completely off-screen -- you should not see anything, but
-				// your program should also not crash/assert.
-				draw_line_solid( surface, 
-					{ fbwidth+10.f, fbheight/2.f }, { fbwidth+100.f, fbheight/2.f },
-					{ 255, 255, 0 }
-				);
-			} break;
-			case 4: {
 				// Extends out of screen
 				draw_line_solid( surface, 
 					{ fbwidth/2.f, fbheight/2.f }, { fbwidth+10.f, fbheight/2.f },
@@ -224,8 +226,37 @@ int main( int aArgc, char* aArgv[] ) try
 				);
 			} break;
 
-			//TODO: your own sample cases here?
-			//TODO: your own sample cases here?
+			// Additional test cases
+			case 4: {
+				// Horizontal line in the middle of the screen
+				draw_line_solid( surface, { 10.f, fbheight / 2.f }, { fbwidth - 10.f, fbheight / 2.f }, { 0, 255, 0 });
+			} break;
+
+			case 5: {
+				// Two connected lines forming a right angle to check for gaps
+				draw_line_solid( surface, { 50.f, 50.f }, { 150.f, 50.f }, { 255, 0, 0 });
+				draw_line_solid( surface, { 150.f, 50.f }, { 150.f, 150.f }, { 255, 0, 0 });
+			} break;
+
+			case 6: {
+				// Steep line to test y-major alignment
+				draw_line_solid( surface, { 20.f, 20.f }, { 30.f, fbheight - 20.f }, { 0, 0, 255 });
+			} break;
+
+			case 7: {
+				// Vertical line along the left edge to test boundary handling
+				draw_line_solid( surface, { 0.f, 0.f }, { 0.f, fbheight - 1.f }, { 255, 0, 255 });
+			} break;
+
+			case 8: {
+				// Off-center diagonal to test clipping
+				draw_line_solid( surface, { -50.f, -50.f }, { fbwidth / 2.f, fbheight / 2.f }, { 0, 255, 255 });
+			} break;
+
+			case 9: {
+				// Diagonal line in the opposite direction to test clipping at boundaries
+				draw_line_solid( surface, { fbwidth / 2.f, fbheight / 2.f }, { fbwidth + 50.f, fbheight + 50.f }, { 255, 255, 255 });
+			} break;
 		}
 		
 		context.draw( surface );
