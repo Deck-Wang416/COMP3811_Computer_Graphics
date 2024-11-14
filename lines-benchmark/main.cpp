@@ -1,5 +1,4 @@
 #include <benchmark/benchmark.h>
-
 #include "../draw2d/draw.hpp"
 #include "../draw2d/draw-ex.hpp"
 #include "../draw2d/surface-ex.hpp"
@@ -37,11 +36,17 @@ void benchmark_bresenham(benchmark::State& state) {
     surface.clear();
 
     Vec2f start = {100.0f, 100.0f};
-    Vec2f end = {width - 100.0f, height - 100.0f};
+    Vec2f end1 = {static_cast<float>(width - 100), static_cast<float>(height - 100)};
+    Vec2f end2 = {static_cast<float>(width), height / 2.0f};
+    Vec2f end3 = {width / 2.0f, static_cast<float>(height)};
+    Vec2f end4 = {0.0f, 0.0f}; // Diagonal back to the origin
     ColorU8_sRGB color{255, 255, 255};
 
     for (auto _ : state) {
-        draw_line_solid(surface, start, end, color);
+        draw_line_solid(surface, start, end1, color);
+        draw_line_solid(surface, start, end2, color);
+        draw_line_solid(surface, start, end3, color);
+        draw_line_solid(surface, start, end4, color);
         benchmark::ClobberMemory();
     }
 }
@@ -55,11 +60,17 @@ void benchmark_dda(benchmark::State& state) {
     surface.clear();
 
     Vec2f start = {100.0f, 100.0f};
-    Vec2f end = {width - 100.0f, height - 100.0f};
+    Vec2f end1 = {static_cast<float>(width - 100), static_cast<float>(height - 100)};
+    Vec2f end2 = {static_cast<float>(width), height / 2.0f};
+    Vec2f end3 = {width / 2.0f, static_cast<float>(height)};
+    Vec2f end4 = {0.0f, 0.0f}; // Diagonal back to the origin
     ColorU8_sRGB color{255, 255, 255};
 
     for (auto _ : state) {
-        draw_line_solid_dda(surface, start, end, color);
+        draw_line_solid_dda(surface, start, end1, color);
+        draw_line_solid_dda(surface, start, end2, color);
+        draw_line_solid_dda(surface, start, end3, color);
+        draw_line_solid_dda(surface, start, end4, color);
         benchmark::ClobberMemory();
     }
 }
