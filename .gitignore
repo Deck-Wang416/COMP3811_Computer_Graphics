@@ -15,6 +15,7 @@ lib/
 # Ignore premake5 binaries
 premake5
 premake5.exe
+premake5.apple
 
 # Temporary files
 *.tmp
