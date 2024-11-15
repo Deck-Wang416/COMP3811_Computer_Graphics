@@ -23,7 +23,8 @@ void draw_line_solid(Surface& aSurface, Vec2f aBegin, Vec2f aEnd, ColorU8_sRGB a
 
     while (true) {
         // Draw the current point
-        if (x0 >= 0 && x0 < aSurface.get_width() && y0 >= 0 && y0 < aSurface.get_height()) {
+        if (x0 >= 0 && x0 < static_cast<int>(aSurface.get_width()) && 
+            y0 >= 0 && y0 < static_cast<int>(aSurface.get_height())) {
             aSurface.set_pixel_srgb(x0, y0, aColor);
         }
 
@@ -75,7 +76,8 @@ void draw_triangle_solid(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Col
             if (x1 > x2) std::swap(x1, x2);
 
             for (int x = static_cast<int>(std::ceil(x1)); x <= static_cast<int>(std::floor(x2)); ++x) {
-                if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+                if (x >= 0 && x < static_cast<int>(aSurface.get_width()) && 
+                    y >= 0 && y < static_cast<int>(aSurface.get_height())) {
                     aSurface.set_pixel_srgb(x, y, aColor);
                 }
             }
@@ -89,7 +91,8 @@ void draw_triangle_solid(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Col
             if (x1 > x2) std::swap(x1, x2);
 
             for (int x = static_cast<int>(std::ceil(x1)); x <= static_cast<int>(std::floor(x2)); ++x) {
-                if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+                if (x >= 0 && x < static_cast<int>(aSurface.get_width()) && 
+                    y >= 0 && y < static_cast<int>(aSurface.get_height())) {
                     aSurface.set_pixel_srgb(x, y, aColor);
                 }
             }
@@ -104,7 +107,8 @@ void draw_triangle_solid(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Col
             if (x1 > x2) std::swap(x1, x2);
 
             for (int x = static_cast<int>(std::ceil(x1)); x <= static_cast<int>(std::floor(x2)); ++x) {
-                if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+                if (x >= 0 && x < static_cast<int>(aSurface.get_width()) && 
+                    y >= 0 && y < static_cast<int>(aSurface.get_height())) {
                     aSurface.set_pixel_srgb(x, y, aColor);
                 }
             }
@@ -117,7 +121,8 @@ void draw_triangle_solid(Surface& aSurface, Vec2f aP0, Vec2f aP1, Vec2f aP2, Col
             if (x1 > x2) std::swap(x1, x2);
 
             for (int x = static_cast<int>(std::ceil(x1)); x <= static_cast<int>(std::floor(x2)); ++x) {
-                if (x >= 0 && x < aSurface.get_width() && y >= 0 && y < aSurface.get_height()) {
+                if (x >= 0 && x < static_cast<int>(aSurface.get_width()) && 
+                    y >= 0 && y < static_cast<int>(aSurface.get_height())) {
                     aSurface.set_pixel_srgb(x, y, aColor);
                 }
             }
