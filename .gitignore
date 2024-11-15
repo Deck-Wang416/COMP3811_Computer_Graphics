@@ -16,6 +16,7 @@ lib/
 premake5
 premake5.exe
 premake5.apple
+Makefile
 
 # Temporary files
 *.tmp
