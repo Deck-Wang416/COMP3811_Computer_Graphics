@@ -12,6 +12,10 @@ lib/
 *.exe
 *.o
 
+# Ignore premake5 binaries
+premake5
+premake5.exe
+
 # Temporary files
 *.tmp
 *.log
