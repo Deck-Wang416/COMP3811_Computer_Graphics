@@ -9,8 +9,6 @@
 _build_/
 bin/
 lib/
-*.exe
-*.o
 
 # Temporary files
 *.tmp
